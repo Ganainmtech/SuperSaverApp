@@ -1,0 +1,14 @@
+name: Pull Request validation
+
+on: [pull_request]
+
+
+jobs:
+  Saver-contracts-ci:
+    name: Run Saver-contracts validation
+    uses: ./.github/workflows/Saver-contracts-ci.yaml
+
+  Saver-frontend-ci:
+    name: Run Saver-frontend validation
+    uses: ./.github/workflows/Saver-frontend-ci.yaml
+

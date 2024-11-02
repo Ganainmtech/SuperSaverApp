@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.vscode/**'
+      - '.idea/**'
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  Saver-contracts-validate:
+    name: Run Saver-contracts release
+    secrets: inherit
+    uses: ./.github/workflows/Saver-contracts-ci.yaml
+
+  Saver-contracts-release:
+    name: Run Saver-contracts release
+    secrets: inherit
+    uses: ./.github/workflows/Saver-contracts-cd.yaml
+    needs: Saver-contracts-validate
+
+  Saver-frontend-validate:
+    name: Run Saver-frontend release
+    secrets: inherit
+    uses: ./.github/workflows/Saver-frontend-ci.yaml
+
+  Saver-frontend-release:
+    name: Run Saver-frontend release
+    secrets: inherit
+    uses: ./.github/workflows/Saver-frontend-cd.yaml
+    needs: Saver-frontend-validate
