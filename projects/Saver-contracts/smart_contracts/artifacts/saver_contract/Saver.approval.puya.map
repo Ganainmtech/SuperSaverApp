@@ -1,0 +1,1011 @@
+{
+  "version": 3,
+  "sources": [
+    "../../saver_contract/contract.py"
+  ],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AA+BA;;;AAAA;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;AAAA;AAAA;AAgBK;;AAAA;AAAA;AAAA;;AAAA;AAhBL;;;AAAA;AAgBK;;;AAAA;AAAA;AAOA;;AAAA;AAAA;AAAA;;AAAA;AAvBL;;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAuBK;;;AAAA;AAAA;AASA;;AAAA;AAAA;AAAA;;AAAA;AAAA;;;AAAA;AAAA;AAhCL;;AAAA;;;;;;AAAA;AAAA;AAOK;;AAAA;AAAL;;;AAAA;AAAA;;;;;;;AASA;;;AAGuB;;AAAf;AAAA;;AAAA;AACkB;;AAAlB;AAAgC;AAAhC;;AAGR;;;AAGe;;AAAA;;AAAwB;;AAAxB;AAAP;AAGkB;;AAAlB;AAAA;AAAA;AAAA;AAAiC;;AAAA;;AAAf;;AAAlB;;AAAA;AAAA;AAAA;AAAA;;AAGR;;;AAGmC;;AAAf;AAAA;AAAA;AAAA;AACqB;;AAAlB;AAAA;AAAA;AAAA;AAGR;AAAA;;AAAA;AAAP;AAGA;AACa;;;;;;AADb;;;AAAA;;;AAAA;AAMkB;;AAAlB;AAAgC;AAAhC;;AAzCR;;;AAKuB;;AAAf;AAA6B;AAA7B;AACkB;;AAAlB;AAAgC;AAAhC;",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "smart_contracts.saver_contract.contract.Saver.approval_program",
+      "params": {},
+      "block": "smart_contracts.saver_contract.contract.Saver.approval_program",
+      "stack_in": [],
+      "op": "intcblock 0 1"
+    },
+    "5": {
+      "op": "bytecblock \"user_balance\" \"user_goal\""
+    },
+    "30": {
+      "callsub": "smart_contracts.saver_contract.contract.Saver.__puya_arc4_router__",
+      "op": "callsub __puya_arc4_router__",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "33": {
+      "op": "return",
+      "stack_out": []
+    },
+    "34": {
+      "subroutine": "smart_contracts.saver_contract.contract.Saver.__puya_arc4_router__",
+      "params": {},
+      "block": "__puya_arc4_router__",
+      "stack_in": [],
+      "op": "proto 0 1"
+    },
+    "37": {
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "39": {
+      "op": "bz __puya_arc4_router___bare_routing@7",
+      "stack_out": []
+    },
+    "42": {
+      "op": "pushbytess 0x67f1255d 0x3625e4eb 0xb7355fd1 // method \"create_saver_jar(uint64)void\", method \"deposit(pay)void\", method \"withdraw()void\""
+    },
+    "59": {
+      "op": "txna ApplicationArgs 0",
+      "defined_out": [
+        "Method(create_saver_jar(uint64)void)",
+        "Method(deposit(pay)void)",
+        "Method(withdraw()void)",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "Method(create_saver_jar(uint64)void)",
+        "Method(deposit(pay)void)",
+        "Method(withdraw()void)",
+        "tmp%2#0"
+      ]
+    },
+    "62": {
+      "op": "match __puya_arc4_router___create_saver_jar_route@2 __puya_arc4_router___deposit_route@3 __puya_arc4_router___withdraw_route@4",
+      "stack_out": []
+    },
+    "70": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "71": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "72": {
+      "block": "__puya_arc4_router___create_saver_jar_route@2",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "74": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "75": {
+      "op": "assert // OnCompletion is NoOp",
+      "stack_out": []
+    },
+    "76": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "78": {
+      "op": "assert // is not creating",
+      "stack_out": []
+    },
+    "79": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "82": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "83": {
+      "callsub": "smart_contracts.saver_contract.contract.Saver.create_saver_jar",
+      "op": "callsub create_saver_jar",
+      "stack_out": []
+    },
+    "86": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "87": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "88": {
+      "block": "__puya_arc4_router___deposit_route@3",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "90": {
+      "op": "!",
+      "defined_out": [
+        "tmp%10#0"
+      ],
+      "stack_out": [
+        "tmp%10#0"
+      ]
+    },
+    "91": {
+      "op": "assert // OnCompletion is NoOp",
+      "stack_out": []
+    },
+    "92": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%11#0"
+      ],
+      "stack_out": [
+        "tmp%11#0"
+      ]
+    },
+    "94": {
+      "op": "assert // is not creating",
+      "stack_out": []
+    },
+    "95": {
+      "op": "txn GroupIndex",
+      "defined_out": [
+        "tmp%13#0"
+      ],
+      "stack_out": [
+        "tmp%13#0"
+      ]
+    },
+    "97": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1",
+        "tmp%13#0"
+      ],
+      "stack_out": [
+        "tmp%13#0",
+        "1"
+      ]
+    },
+    "98": {
+      "op": "-",
+      "defined_out": [
+        "gtxn_idx%0#0"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0"
+      ]
+    },
+    "99": {
+      "op": "dup",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_idx%0#0 (copy)"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0",
+        "gtxn_idx%0#0 (copy)"
+      ]
+    },
+    "100": {
+      "op": "gtxns TypeEnum",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0"
+      ]
+    },
+    "102": {
+      "op": "intc_1 // pay",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0",
+        "pay"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0",
+        "pay"
+      ]
+    },
+    "103": {
+      "op": "==",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type_matches%0#0"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type_matches%0#0"
+      ]
+    },
+    "104": {
+      "op": "assert // transaction type is pay",
+      "stack_out": [
+        "gtxn_idx%0#0"
+      ]
+    },
+    "105": {
+      "callsub": "smart_contracts.saver_contract.contract.Saver.deposit",
+      "op": "callsub deposit",
+      "stack_out": []
+    },
+    "108": {
+      "op": "intc_1 // 1",
+      "stack_out": [
+        "1"
+      ]
+    },
+    "109": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "110": {
+      "block": "__puya_arc4_router___withdraw_route@4",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%14#0"
+      ],
+      "stack_out": [
+        "tmp%14#0"
+      ]
+    },
+    "112": {
+      "op": "!",
+      "defined_out": [
+        "tmp%15#0"
+      ],
+      "stack_out": [
+        "tmp%15#0"
+      ]
+    },
+    "113": {
+      "op": "assert // OnCompletion is NoOp",
+      "stack_out": []
+    },
+    "114": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%16#0"
+      ],
+      "stack_out": [
+        "tmp%16#0"
+      ]
+    },
+    "116": {
+      "op": "assert // is not creating",
+      "stack_out": []
+    },
+    "117": {
+      "callsub": "smart_contracts.saver_contract.contract.Saver.withdraw",
+      "op": "callsub withdraw"
+    },
+    "120": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "121": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "122": {
+      "block": "__puya_arc4_router___bare_routing@7",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%18#0"
+      ],
+      "stack_out": [
+        "tmp%18#0"
+      ]
+    },
+    "124": {
+      "op": "switch __puya_arc4_router_____algopy_default_create@9 __puya_arc4_router___OptIn@8",
+      "stack_out": []
+    },
+    "130": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "131": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "132": {
+      "block": "__puya_arc4_router___OptIn@8",
+      "stack_in": [],
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%19#0"
+      ],
+      "stack_out": [
+        "tmp%19#0"
+      ]
+    },
+    "134": {
+      "op": "assert // is not creating",
+      "stack_out": []
+    },
+    "135": {
+      "callsub": "smart_contracts.saver_contract.contract.Saver.OptIn",
+      "op": "callsub OptIn"
+    },
+    "138": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "139": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "140": {
+      "block": "__puya_arc4_router_____algopy_default_create@9",
+      "stack_in": [],
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%21#0"
+      ],
+      "stack_out": [
+        "tmp%21#0"
+      ]
+    },
+    "142": {
+      "op": "!",
+      "defined_out": [
+        "tmp%22#0"
+      ],
+      "stack_out": [
+        "tmp%22#0"
+      ]
+    },
+    "143": {
+      "op": "assert // is creating",
+      "stack_out": []
+    },
+    "144": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "145": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "146": {
+      "subroutine": "smart_contracts.saver_contract.contract.Saver.create_saver_jar",
+      "params": {
+        "goal_amount#0": "uint64"
+      },
+      "block": "create_saver_jar",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "149": {
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "151": {
+      "op": "bytec_1 // \"user_goal\"",
+      "defined_out": [
+        "\"user_goal\"",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "\"user_goal\""
+      ]
+    },
+    "152": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "\"user_goal\"",
+        "goal_amount#0 (copy)",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "\"user_goal\"",
+        "goal_amount#0 (copy)"
+      ]
+    },
+    "154": {
+      "op": "app_local_put",
+      "stack_out": []
+    },
+    "155": {
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "157": {
+      "op": "bytec_0 // \"user_balance\"",
+      "defined_out": [
+        "\"user_balance\"",
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0",
+        "\"user_balance\""
+      ]
+    },
+    "158": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "\"user_balance\"",
+        "0",
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0",
+        "\"user_balance\"",
+        "0"
+      ]
+    },
+    "159": {
+      "op": "app_local_put",
+      "stack_out": []
+    },
+    "160": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "161": {
+      "subroutine": "smart_contracts.saver_contract.contract.Saver.deposit",
+      "params": {
+        "deposit_txn#0": "uint64"
+      },
+      "block": "deposit",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "164": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "deposit_txn#0 (copy)"
+      ],
+      "stack_out": [
+        "deposit_txn#0 (copy)"
+      ]
+    },
+    "166": {
+      "op": "gtxns Receiver",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "168": {
+      "op": "global CurrentApplicationAddress",
+      "defined_out": [
+        "tmp%0#0",
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%1#0"
+      ]
+    },
+    "170": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "171": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "172": {
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "174": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0",
+        "0"
+      ]
+    },
+    "175": {
+      "op": "bytec_0 // \"user_balance\"",
+      "defined_out": [
+        "\"user_balance\"",
+        "0",
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0",
+        "0",
+        "\"user_balance\""
+      ]
+    },
+    "176": {
+      "op": "app_local_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0"
+      ],
+      "stack_out": [
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "177": {
+      "op": "assert // check self.user_balance exists for account",
+      "stack_out": [
+        "maybe_value%0#0"
+      ]
+    },
+    "178": {
+      "op": "frame_dig -1",
+      "stack_out": [
+        "maybe_value%0#0",
+        "deposit_txn#0 (copy)"
+      ]
+    },
+    "180": {
+      "op": "gtxns Amount",
+      "defined_out": [
+        "maybe_value%0#0",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "maybe_value%0#0",
+        "tmp%4#0"
+      ]
+    },
+    "182": {
+      "op": "txn Sender",
+      "defined_out": [
+        "maybe_value%0#0",
+        "tmp%4#0",
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "maybe_value%0#0",
+        "tmp%4#0",
+        "tmp%5#0"
+      ]
+    },
+    "184": {
+      "op": "cover 2",
+      "stack_out": [
+        "tmp%5#0",
+        "maybe_value%0#0",
+        "tmp%4#0"
+      ]
+    },
+    "186": {
+      "op": "+",
+      "defined_out": [
+        "new_state_value%0#0",
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0",
+        "new_state_value%0#0"
+      ]
+    },
+    "187": {
+      "op": "bytec_0 // \"user_balance\""
+    },
+    "188": {
+      "op": "swap",
+      "stack_out": [
+        "tmp%5#0",
+        "\"user_balance\"",
+        "new_state_value%0#0"
+      ]
+    },
+    "189": {
+      "op": "app_local_put",
+      "stack_out": []
+    },
+    "190": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "191": {
+      "subroutine": "smart_contracts.saver_contract.contract.Saver.withdraw",
+      "params": {},
+      "block": "withdraw",
+      "stack_in": [],
+      "op": "proto 0 0"
+    },
+    "194": {
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "196": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "0"
+      ]
+    },
+    "197": {
+      "op": "bytec_1 // \"user_goal\"",
+      "defined_out": [
+        "\"user_goal\"",
+        "0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "0",
+        "\"user_goal\""
+      ]
+    },
+    "198": {
+      "op": "app_local_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "user_goal#0"
+      ],
+      "stack_out": [
+        "user_goal#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "199": {
+      "op": "assert // check self.user_goal exists for account",
+      "stack_out": [
+        "user_goal#0"
+      ]
+    },
+    "200": {
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%1#0",
+        "user_goal#0"
+      ],
+      "stack_out": [
+        "user_goal#0",
+        "tmp%1#0"
+      ]
+    },
+    "202": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "user_goal#0",
+        "tmp%1#0",
+        "0"
+      ]
+    },
+    "203": {
+      "op": "bytec_0 // \"user_balance\"",
+      "defined_out": [
+        "\"user_balance\"",
+        "0",
+        "tmp%1#0",
+        "user_goal#0"
+      ],
+      "stack_out": [
+        "user_goal#0",
+        "tmp%1#0",
+        "0",
+        "\"user_balance\""
+      ]
+    },
+    "204": {
+      "op": "app_local_get_ex",
+      "defined_out": [
+        "maybe_exists%1#0",
+        "user_balance#0",
+        "user_goal#0"
+      ],
+      "stack_out": [
+        "user_goal#0",
+        "user_balance#0",
+        "maybe_exists%1#0"
+      ]
+    },
+    "205": {
+      "op": "assert // check self.user_balance exists for account",
+      "stack_out": [
+        "user_goal#0",
+        "user_balance#0"
+      ]
+    },
+    "206": {
+      "op": "dup",
+      "defined_out": [
+        "user_balance#0",
+        "user_balance#0 (copy)",
+        "user_goal#0"
+      ],
+      "stack_out": [
+        "user_goal#0",
+        "user_balance#0",
+        "user_balance#0 (copy)"
+      ]
+    },
+    "207": {
+      "op": "uncover 2",
+      "stack_out": [
+        "user_balance#0",
+        "user_balance#0 (copy)",
+        "user_goal#0"
+      ]
+    },
+    "209": {
+      "op": ">=",
+      "defined_out": [
+        "tmp%2#0",
+        "user_balance#0"
+      ],
+      "stack_out": [
+        "user_balance#0",
+        "tmp%2#0"
+      ]
+    },
+    "210": {
+      "op": "assert",
+      "stack_out": [
+        "user_balance#0"
+      ]
+    },
+    "211": {
+      "op": "itxn_begin"
+    },
+    "212": {
+      "op": "txn Sender",
+      "defined_out": [
+        "inner_txn_params%0%%param_Receiver_idx_0#0",
+        "user_balance#0"
+      ],
+      "stack_out": [
+        "user_balance#0",
+        "inner_txn_params%0%%param_Receiver_idx_0#0"
+      ]
+    },
+    "214": {
+      "op": "itxn_field Receiver"
+    },
+    "216": {
+      "op": "itxn_field Amount",
+      "stack_out": []
+    },
+    "218": {
+      "op": "intc_1 // pay",
+      "defined_out": [
+        "pay"
+      ],
+      "stack_out": [
+        "pay"
+      ]
+    },
+    "219": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": []
+    },
+    "221": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0"
+      ]
+    },
+    "222": {
+      "op": "itxn_field Fee",
+      "stack_out": []
+    },
+    "224": {
+      "op": "itxn_submit"
+    },
+    "225": {
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "227": {
+      "op": "bytec_0 // \"user_balance\"",
+      "stack_out": [
+        "tmp%3#0",
+        "\"user_balance\""
+      ]
+    },
+    "228": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "tmp%3#0",
+        "\"user_balance\"",
+        "0"
+      ]
+    },
+    "229": {
+      "op": "app_local_put",
+      "stack_out": []
+    },
+    "230": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "231": {
+      "subroutine": "smart_contracts.saver_contract.contract.Saver.OptIn",
+      "params": {},
+      "block": "OptIn",
+      "stack_in": [],
+      "op": "proto 0 0"
+    },
+    "234": {
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "236": {
+      "op": "bytec_1 // \"user_goal\"",
+      "defined_out": [
+        "\"user_goal\"",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "\"user_goal\""
+      ]
+    },
+    "237": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "\"user_goal\"",
+        "0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "\"user_goal\"",
+        "0"
+      ]
+    },
+    "238": {
+      "op": "app_local_put",
+      "stack_out": []
+    },
+    "239": {
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "241": {
+      "op": "bytec_0 // \"user_balance\"",
+      "defined_out": [
+        "\"user_balance\"",
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0",
+        "\"user_balance\""
+      ]
+    },
+    "242": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "tmp%1#0",
+        "\"user_balance\"",
+        "0"
+      ]
+    },
+    "243": {
+      "op": "app_local_put",
+      "stack_out": []
+    },
+    "244": {
+      "retsub": true,
+      "op": "retsub"
+    }
+  }
+}

@@ -1,6 +1,5 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account'
-import { OnSchemaBreak, OnUpdate } from '@algorandfoundation/algokit-utils/types/app'
 import { AppDetails } from '@algorandfoundation/algokit-utils/types/app-client'
 import { useWallet } from '@txnlab/use-wallet'
 import { useSnackbar } from 'notistack'
@@ -13,7 +12,7 @@ interface AppCallsInterface {
   setModalState: (value: boolean) => void
 }
 
-const AppCalls = ({ openModal, setModalState }: AppCallsInterface) => {
+const StartSaver = ({ openModal, setModalState }: AppCallsInterface) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [contractInput, setContractInput] = useState<string>('')
 
@@ -41,54 +40,47 @@ const AppCalls = ({ openModal, setModalState }: AppCallsInterface) => {
     // Instead, you would deploy your contract on your backend and reference it by id.
     // Given the simplicity of the starter contract, we are deploying it on the frontend
     // for demonstration purposes.
-    const appDetails = {
-      resolveBy: 'creatorAndName',
-      sender: { signer, addr: activeAddress } as TransactionSignerAccount,
-      creatorAddress: activeAddress,
-      findExistingUsing: indexer,
-    } as AppDetails
 
-    const appClient = new SaverClient(appDetails, algodClient)
-    const deployParams = {
-      onSchemaBreak: OnSchemaBreak.AppendApp,
-      onUpdate: OnUpdate.AppendApp,
+    try {
+      const appId = 1007
+
+      const appDetails = {
+        resolveBy: 'id',
+        sender: { signer, addr: activeAddress } as TransactionSignerAccount,
+        id: appId,
+      } as AppDetails
+
+      console.log('App Details:', appDetails)
+
+      const appClient = new SaverClient(appDetails, algodClient)
+      console.log('Created app client:', appClient)
+
+      // Call the optIn method
+      const optInResponse = await appClient.optIn
+      console.log('Opt-in response:', optInResponse)
+
+      // Now call the 'bare' function to actually opt-in
+      const result = await optInResponse.bare()
+      console.log('Opt-in result:', result)
+
+      // Handle response logic here
+    } catch (error) {
+      console.error('Error during opt-in:', error)
+    } finally {
+      setLoading(false)
     }
-    await appClient.deploy(deployParams).catch((e: Error) => {
-      enqueueSnackbar(`Error deploying the contract: ${e.message}`, { variant: 'error' })
-      setLoading(false)
-      return
-    })
-
-    const response = await appClient.hello({ name: contractInput }).catch((e: Error) => {
-      enqueueSnackbar(`Error calling the contract: ${e.message}`, { variant: 'error' })
-      setLoading(false)
-      return
-    })
-
-    enqueueSnackbar(`Response from the contract: ${response?.return}`, { variant: 'success' })
-    setLoading(false)
   }
-
   return (
     <dialog id="appcalls_modal" className={`modal ${openModal ? 'modal-open' : ''} bg-slate-200`}>
       <form method="dialog" className="modal-box">
-        <h3 className="font-bold text-lg">Say hello to your Algorand smart contract</h3>
+        <h3 className="font-bold text-lg">Opt into Your Saver Smart Contract</h3>
         <br />
-        <input
-          type="text"
-          placeholder="Provide input to hello function"
-          className="input input-bordered w-full"
-          value={contractInput}
-          onChange={(e) => {
-            setContractInput(e.target.value)
-          }}
-        />
-        <div className="modal-action ">
+        <button type="button" className={`btn w-full ${loading ? 'loading' : ''}`} onClick={sendAppCall} disabled={loading}>
+          {loading ? 'Opting In...' : 'Opt In'}
+        </button>
+        <div className="modal-action">
           <button className="btn" onClick={() => setModalState(!openModal)}>
             Close
-          </button>
-          <button className={`btn`} onClick={sendAppCall}>
-            {loading ? <span className="loading loading-spinner" /> : 'Send application call'}
           </button>
         </div>
       </form>
@@ -96,4 +88,4 @@ const AppCalls = ({ openModal, setModalState }: AppCallsInterface) => {
   )
 }
 
-export default AppCalls
+export default StartSaver

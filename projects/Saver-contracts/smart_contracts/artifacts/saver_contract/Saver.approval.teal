@@ -1,0 +1,164 @@
+#pragma version 10
+
+smart_contracts.saver_contract.contract.Saver.approval_program:
+    intcblock 0 1
+    bytecblock "user_balance" "user_goal"
+    callsub __puya_arc4_router__
+    return
+
+
+// smart_contracts.saver_contract.contract.Saver.__puya_arc4_router__() -> uint64:
+__puya_arc4_router__:
+    proto 0 1
+    txn NumAppArgs
+    bz __puya_arc4_router___bare_routing@7
+    pushbytess 0x67f1255d 0x3625e4eb 0xb7355fd1 // method "create_saver_jar(uint64)void", method "deposit(pay)void", method "withdraw()void"
+    txna ApplicationArgs 0
+    match __puya_arc4_router___create_saver_jar_route@2 __puya_arc4_router___deposit_route@3 __puya_arc4_router___withdraw_route@4
+    intc_0 // 0
+    retsub
+
+__puya_arc4_router___create_saver_jar_route@2:
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    txna ApplicationArgs 1
+    btoi
+    callsub create_saver_jar
+    intc_1 // 1
+    retsub
+
+__puya_arc4_router___deposit_route@3:
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    callsub deposit
+    intc_1 // 1
+    retsub
+
+__puya_arc4_router___withdraw_route@4:
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    callsub withdraw
+    intc_1 // 1
+    retsub
+
+__puya_arc4_router___bare_routing@7:
+    txn OnCompletion
+    switch __puya_arc4_router_____algopy_default_create@9 __puya_arc4_router___OptIn@8
+    intc_0 // 0
+    retsub
+
+__puya_arc4_router___OptIn@8:
+    txn ApplicationID
+    assert // is not creating
+    callsub OptIn
+    intc_1 // 1
+    retsub
+
+__puya_arc4_router_____algopy_default_create@9:
+    txn ApplicationID
+    !
+    assert // is creating
+    intc_1 // 1
+    retsub
+
+
+// smart_contracts.saver_contract.contract.Saver.create_saver_jar(goal_amount: uint64) -> void:
+create_saver_jar:
+    proto 1 0
+    txn Sender
+    bytec_1 // "user_goal"
+    frame_dig -1
+    app_local_put
+    txn Sender
+    bytec_0 // "user_balance"
+    intc_0 // 0
+    app_local_put
+    retsub
+
+
+// smart_contracts.saver_contract.contract.Saver.deposit(deposit_txn: uint64) -> void:
+deposit:
+    proto 1 0
+    frame_dig -1
+    gtxns Receiver
+    global CurrentApplicationAddress
+    ==
+    assert
+    txn Sender
+    intc_0 // 0
+    bytec_0 // "user_balance"
+    app_local_get_ex
+    assert // check self.user_balance exists for account
+    frame_dig -1
+    gtxns Amount
+    txn Sender
+    cover 2
+    +
+    bytec_0 // "user_balance"
+    swap
+    app_local_put
+    retsub
+
+
+// smart_contracts.saver_contract.contract.Saver.withdraw() -> void:
+withdraw:
+    proto 0 0
+    txn Sender
+    intc_0 // 0
+    bytec_1 // "user_goal"
+    app_local_get_ex
+    assert // check self.user_goal exists for account
+    txn Sender
+    intc_0 // 0
+    bytec_0 // "user_balance"
+    app_local_get_ex
+    assert // check self.user_balance exists for account
+    dup
+    uncover 2
+    >=
+    assert
+    itxn_begin
+    txn Sender
+    itxn_field Receiver
+    itxn_field Amount
+    intc_1 // pay
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    txn Sender
+    bytec_0 // "user_balance"
+    intc_0 // 0
+    app_local_put
+    retsub
+
+
+// smart_contracts.saver_contract.contract.Saver.OptIn() -> void:
+OptIn:
+    proto 0 0
+    txn Sender
+    bytec_1 // "user_goal"
+    intc_0 // 0
+    app_local_put
+    txn Sender
+    bytec_0 // "user_balance"
+    intc_0 // 0
+    app_local_put
+    retsub

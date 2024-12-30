@@ -1,0 +1,98 @@
+{
+    "hints": {
+        "create_saver_jar(uint64)void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "deposit(pay)void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "withdraw()void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        }
+    },
+    "source": {
+        "approval": "I3ByYWdtYSB2ZXJzaW9uIDEwCgpzbWFydF9jb250cmFjdHMuc2F2ZXJfY29udHJhY3QuY29udHJhY3QuU2F2ZXIuYXBwcm92YWxfcHJvZ3JhbToKICAgIGludGNibG9jayAwIDEKICAgIGJ5dGVjYmxvY2sgInVzZXJfYmFsYW5jZSIgInVzZXJfZ29hbCIKICAgIGNhbGxzdWIgX19wdXlhX2FyYzRfcm91dGVyX18KICAgIHJldHVybgoKCi8vIHNtYXJ0X2NvbnRyYWN0cy5zYXZlcl9jb250cmFjdC5jb250cmFjdC5TYXZlci5fX3B1eWFfYXJjNF9yb3V0ZXJfXygpIC0+IHVpbnQ2NDoKX19wdXlhX2FyYzRfcm91dGVyX186CiAgICBwcm90byAwIDEKICAgIHR4biBOdW1BcHBBcmdzCiAgICBieiBfX3B1eWFfYXJjNF9yb3V0ZXJfX19iYXJlX3JvdXRpbmdANwogICAgcHVzaGJ5dGVzcyAweDY3ZjEyNTVkIDB4MzYyNWU0ZWIgMHhiNzM1NWZkMSAvLyBtZXRob2QgImNyZWF0ZV9zYXZlcl9qYXIodWludDY0KXZvaWQiLCBtZXRob2QgImRlcG9zaXQocGF5KXZvaWQiLCBtZXRob2QgIndpdGhkcmF3KCl2b2lkIgogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMAogICAgbWF0Y2ggX19wdXlhX2FyYzRfcm91dGVyX19fY3JlYXRlX3NhdmVyX2phcl9yb3V0ZUAyIF9fcHV5YV9hcmM0X3JvdXRlcl9fX2RlcG9zaXRfcm91dGVAMyBfX3B1eWFfYXJjNF9yb3V0ZXJfX193aXRoZHJhd19yb3V0ZUA0CiAgICBpbnRjXzAgLy8gMAogICAgcmV0c3ViCgpfX3B1eWFfYXJjNF9yb3V0ZXJfX19jcmVhdGVfc2F2ZXJfamFyX3JvdXRlQDI6CiAgICB0eG4gT25Db21wbGV0aW9uCiAgICAhCiAgICBhc3NlcnQgLy8gT25Db21wbGV0aW9uIGlzIE5vT3AKICAgIHR4biBBcHBsaWNhdGlvbklECiAgICBhc3NlcnQgLy8gaXMgbm90IGNyZWF0aW5nCiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAxCiAgICBidG9pCiAgICBjYWxsc3ViIGNyZWF0ZV9zYXZlcl9qYXIKICAgIGludGNfMSAvLyAxCiAgICByZXRzdWIKCl9fcHV5YV9hcmM0X3JvdXRlcl9fX2RlcG9zaXRfcm91dGVAMzoKICAgIHR4biBPbkNvbXBsZXRpb24KICAgICEKICAgIGFzc2VydCAvLyBPbkNvbXBsZXRpb24gaXMgTm9PcAogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgIGFzc2VydCAvLyBpcyBub3QgY3JlYXRpbmcKICAgIHR4biBHcm91cEluZGV4CiAgICBpbnRjXzEgLy8gMQogICAgLQogICAgZHVwCiAgICBndHhucyBUeXBlRW51bQogICAgaW50Y18xIC8vIHBheQogICAgPT0KICAgIGFzc2VydCAvLyB0cmFuc2FjdGlvbiB0eXBlIGlzIHBheQogICAgY2FsbHN1YiBkZXBvc2l0CiAgICBpbnRjXzEgLy8gMQogICAgcmV0c3ViCgpfX3B1eWFfYXJjNF9yb3V0ZXJfX193aXRoZHJhd19yb3V0ZUA0OgogICAgdHhuIE9uQ29tcGxldGlvbgogICAgIQogICAgYXNzZXJ0IC8vIE9uQ29tcGxldGlvbiBpcyBOb09wCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgYXNzZXJ0IC8vIGlzIG5vdCBjcmVhdGluZwogICAgY2FsbHN1YiB3aXRoZHJhdwogICAgaW50Y18xIC8vIDEKICAgIHJldHN1YgoKX19wdXlhX2FyYzRfcm91dGVyX19fYmFyZV9yb3V0aW5nQDc6CiAgICB0eG4gT25Db21wbGV0aW9uCiAgICBzd2l0Y2ggX19wdXlhX2FyYzRfcm91dGVyX19fX19hbGdvcHlfZGVmYXVsdF9jcmVhdGVAOSBfX3B1eWFfYXJjNF9yb3V0ZXJfX19PcHRJbkA4CiAgICBpbnRjXzAgLy8gMAogICAgcmV0c3ViCgpfX3B1eWFfYXJjNF9yb3V0ZXJfX19PcHRJbkA4OgogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgIGFzc2VydCAvLyBpcyBub3QgY3JlYXRpbmcKICAgIGNhbGxzdWIgT3B0SW4KICAgIGludGNfMSAvLyAxCiAgICByZXRzdWIKCl9fcHV5YV9hcmM0X3JvdXRlcl9fX19fYWxnb3B5X2RlZmF1bHRfY3JlYXRlQDk6CiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgIQogICAgYXNzZXJ0IC8vIGlzIGNyZWF0aW5nCiAgICBpbnRjXzEgLy8gMQogICAgcmV0c3ViCgoKLy8gc21hcnRfY29udHJhY3RzLnNhdmVyX2NvbnRyYWN0LmNvbnRyYWN0LlNhdmVyLmNyZWF0ZV9zYXZlcl9qYXIoZ29hbF9hbW91bnQ6IHVpbnQ2NCkgLT4gdm9pZDoKY3JlYXRlX3NhdmVyX2phcjoKICAgIHByb3RvIDEgMAogICAgdHhuIFNlbmRlcgogICAgYnl0ZWNfMSAvLyAidXNlcl9nb2FsIgogICAgZnJhbWVfZGlnIC0xCiAgICBhcHBfbG9jYWxfcHV0CiAgICB0eG4gU2VuZGVyCiAgICBieXRlY18wIC8vICJ1c2VyX2JhbGFuY2UiCiAgICBpbnRjXzAgLy8gMAogICAgYXBwX2xvY2FsX3B1dAogICAgcmV0c3ViCgoKLy8gc21hcnRfY29udHJhY3RzLnNhdmVyX2NvbnRyYWN0LmNvbnRyYWN0LlNhdmVyLmRlcG9zaXQoZGVwb3NpdF90eG46IHVpbnQ2NCkgLT4gdm9pZDoKZGVwb3NpdDoKICAgIHByb3RvIDEgMAogICAgZnJhbWVfZGlnIC0xCiAgICBndHhucyBSZWNlaXZlcgogICAgZ2xvYmFsIEN1cnJlbnRBcHBsaWNhdGlvbkFkZHJlc3MKICAgID09CiAgICBhc3NlcnQKICAgIHR4biBTZW5kZXIKICAgIGludGNfMCAvLyAwCiAgICBieXRlY18wIC8vICJ1c2VyX2JhbGFuY2UiCiAgICBhcHBfbG9jYWxfZ2V0X2V4CiAgICBhc3NlcnQgLy8gY2hlY2sgc2VsZi51c2VyX2JhbGFuY2UgZXhpc3RzIGZvciBhY2NvdW50CiAgICBmcmFtZV9kaWcgLTEKICAgIGd0eG5zIEFtb3VudAogICAgdHhuIFNlbmRlcgogICAgY292ZXIgMgogICAgKwogICAgYnl0ZWNfMCAvLyAidXNlcl9iYWxhbmNlIgogICAgc3dhcAogICAgYXBwX2xvY2FsX3B1dAogICAgcmV0c3ViCgoKLy8gc21hcnRfY29udHJhY3RzLnNhdmVyX2NvbnRyYWN0LmNvbnRyYWN0LlNhdmVyLndpdGhkcmF3KCkgLT4gdm9pZDoKd2l0aGRyYXc6CiAgICBwcm90byAwIDAKICAgIHR4biBTZW5kZXIKICAgIGludGNfMCAvLyAwCiAgICBieXRlY18xIC8vICJ1c2VyX2dvYWwiCiAgICBhcHBfbG9jYWxfZ2V0X2V4CiAgICBhc3NlcnQgLy8gY2hlY2sgc2VsZi51c2VyX2dvYWwgZXhpc3RzIGZvciBhY2NvdW50CiAgICB0eG4gU2VuZGVyCiAgICBpbnRjXzAgLy8gMAogICAgYnl0ZWNfMCAvLyAidXNlcl9iYWxhbmNlIgogICAgYXBwX2xvY2FsX2dldF9leAogICAgYXNzZXJ0IC8vIGNoZWNrIHNlbGYudXNlcl9iYWxhbmNlIGV4aXN0cyBmb3IgYWNjb3VudAogICAgZHVwCiAgICB1bmNvdmVyIDIKICAgID49CiAgICBhc3NlcnQKICAgIGl0eG5fYmVnaW4KICAgIHR4biBTZW5kZXIKICAgIGl0eG5fZmllbGQgUmVjZWl2ZXIKICAgIGl0eG5fZmllbGQgQW1vdW50CiAgICBpbnRjXzEgLy8gcGF5CiAgICBpdHhuX2ZpZWxkIFR5cGVFbnVtCiAgICBpbnRjXzAgLy8gMAogICAgaXR4bl9maWVsZCBGZWUKICAgIGl0eG5fc3VibWl0CiAgICB0eG4gU2VuZGVyCiAgICBieXRlY18wIC8vICJ1c2VyX2JhbGFuY2UiCiAgICBpbnRjXzAgLy8gMAogICAgYXBwX2xvY2FsX3B1dAogICAgcmV0c3ViCgoKLy8gc21hcnRfY29udHJhY3RzLnNhdmVyX2NvbnRyYWN0LmNvbnRyYWN0LlNhdmVyLk9wdEluKCkgLT4gdm9pZDoKT3B0SW46CiAgICBwcm90byAwIDAKICAgIHR4biBTZW5kZXIKICAgIGJ5dGVjXzEgLy8gInVzZXJfZ29hbCIKICAgIGludGNfMCAvLyAwCiAgICBhcHBfbG9jYWxfcHV0CiAgICB0eG4gU2VuZGVyCiAgICBieXRlY18wIC8vICJ1c2VyX2JhbGFuY2UiCiAgICBpbnRjXzAgLy8gMAogICAgYXBwX2xvY2FsX3B1dAogICAgcmV0c3ViCg==",
+        "clear": "I3ByYWdtYSB2ZXJzaW9uIDEwCgpzbWFydF9jb250cmFjdHMuc2F2ZXJfY29udHJhY3QuY29udHJhY3QuU2F2ZXIuY2xlYXJfc3RhdGVfcHJvZ3JhbToKICAgIHB1c2hpbnQgMSAvLyAxCiAgICByZXR1cm4K"
+    },
+    "state": {
+        "global": {
+            "num_byte_slices": 0,
+            "num_uints": 0
+        },
+        "local": {
+            "num_byte_slices": 0,
+            "num_uints": 2
+        }
+    },
+    "schema": {
+        "global": {
+            "declared": {},
+            "reserved": {}
+        },
+        "local": {
+            "declared": {
+                "user_balance": {
+                    "type": "uint64",
+                    "key": "user_balance",
+                    "descr": "User's savings balance"
+                },
+                "user_goal": {
+                    "type": "uint64",
+                    "key": "user_goal",
+                    "descr": "User's savings goal"
+                }
+            },
+            "reserved": {}
+        }
+    },
+    "contract": {
+        "name": "Saver",
+        "methods": [
+            {
+                "name": "create_saver_jar",
+                "args": [
+                    {
+                        "type": "uint64",
+                        "name": "goal_amount"
+                    }
+                ],
+                "readonly": false,
+                "returns": {
+                    "type": "void"
+                }
+            },
+            {
+                "name": "deposit",
+                "args": [
+                    {
+                        "type": "pay",
+                        "name": "deposit_txn"
+                    }
+                ],
+                "readonly": false,
+                "returns": {
+                    "type": "void"
+                }
+            },
+            {
+                "name": "withdraw",
+                "args": [],
+                "readonly": false,
+                "returns": {
+                    "type": "void"
+                }
+            }
+        ],
+        "networks": {}
+    },
+    "bare_call_config": {
+        "opt_in": "CALL",
+        "no_op": "CREATE"
+    }
+}
