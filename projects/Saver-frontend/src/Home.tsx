@@ -6,7 +6,7 @@ import ConnectWallet from './components/ConnectWallet'
 const Home: React.FC = () => {
   const [openWalletModal, setOpenWalletModal] = useState(false)
   const [isFormVisible, setIsFormVisible] = useState(false)
-  const { activeAddress } = useWallet() // Get the active wallet address
+  const { activeAddress } = useWallet()
   const navigate = useNavigate()
 
   const toggleWalletModal = () => {
@@ -14,13 +14,18 @@ const Home: React.FC = () => {
   }
 
   const handleGetStarted = () => {
-    setIsFormVisible(true) // Show the form when "Get Started" is clicked
-    navigate('/StartSuperSaver') // Navigate to StartSaver page
+    setIsFormVisible(true)
+    navigate('/StartSuperSaver')
   }
 
   const handleViewSavings = () => {
-    setIsFormVisible(true) // Show the form when "ViewSavings" is clicked
-    navigate('/ViewSavings') // Navigate to ViewSavings page
+    setIsFormVisible(true)
+    navigate('/ViewSavings')
+  }
+
+  const handleViewAboutSaver = () => {
+    setIsFormVisible(true)
+    navigate('/AboutSaver')
   }
 
   return (
@@ -39,7 +44,7 @@ const Home: React.FC = () => {
             <a href="/ViewSavings" className="hover:underline">
               Your Savings
             </a>
-            <a href="#about" className="hover:underline">
+            <a href="/AboutSaver" className="hover:underline">
               About
             </a>
             <button
@@ -78,11 +83,11 @@ const Home: React.FC = () => {
           <div className="bg-white p-6 rounded shadow-md">
             <h3 className="text-xl font-semibold text-teal-800">Learn More</h3>
             <p className="text-teal-600 mt-2">Discover how the Super Saver App works for you.</p>
-            <button className="btn btn-primary mt-4 w-full">Learn More</button>
+            <button className="btn btn-primary mt-4 w-full" onClick={handleViewAboutSaver}>
+              Learn More
+            </button>
           </div>
         </section>
-
-        {/* Render InteractSaverForm if isFormVisible is true */}
 
         {!activeAddress && isFormVisible && <p className="text-center text-red-500 mt-4">Please connect your wallet to continue.</p>}
       </main>

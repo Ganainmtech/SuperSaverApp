@@ -9,6 +9,7 @@ import Home from './Home'
 import StartSaver from './components/StartSaver'
 import ViewSavings from './components/ViewSavings'
 import { getAlgodConfigFromViteEnvironment, getKmdConfigFromViteEnvironment } from './utils/network/getAlgoClientConfigs'
+import AboutSaver from './components/AboutSaver'
 
 let providersArray: ProvidersArray
 
@@ -58,6 +59,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/StartSuperSaver" element={<StartSaver openModal={true} setModalState={() => {}} />} />
             <Route path="/ViewSavings" element={<ViewSavings />} />
+            <Route path="/AboutSaver" element={<AboutSaver />} />
           </Routes>
         </Router>
       </WalletProvider>
