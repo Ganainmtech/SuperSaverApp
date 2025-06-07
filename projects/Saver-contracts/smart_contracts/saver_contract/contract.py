@@ -17,7 +17,6 @@ Example Workflow:
 3. The user deposits funds using the `deposit` method.
 4. Once the user's balance meets or exceeds their goal, they can withdraw their savings using the `withdraw` method.
 '''
-
 from algopy import (
     Global,
     Txn,
@@ -26,55 +25,80 @@ from algopy import (
     LocalState,
     itxn,
     gtxn,
-    OnCompleteAction
+    OnCompleteAction,
+    GlobalState,
 )
 
 class Saver(arc4.ARC4Contract):
     def __init__(self) -> None:
-        # Declare local state variables to track user's savings goal and balance
+        # Core user savings state
         self.user_goal = LocalState(UInt64, description="User's savings goal")
         self.user_balance = LocalState(UInt64, description="User's savings balance")
+        self.user_withdraw_count = LocalState(UInt64, description="Number of times user completed savings goal")
 
-    # Opt-in logic to initialise local state for users
-    @arc4.baremethod(
-        allow_actions=["OptIn"],
-    )
+        # Analytics & history
+        self.total_saved = LocalState(UInt64, description="Lifetime total ALGO deposited by user")
+        self.last_user_goal = LocalState(UInt64, description="Previous goal before latest one")
+        self.last_withdrawn = LocalState(UInt64, description="Last amount withdrawn")
+        self.last_withdraw_time = LocalState(UInt64, description="Timestamp of last withdrawal")
+        self.highest_goal_achieved = LocalState(UInt64, description="Highest savings goal achieved")
+        self.average_deposit_amount = LocalState(UInt64, description="Running average of deposit amounts")
+
+        # Internal counter for deposit count (used to calculate average)
+        self.deposit_count = LocalState(UInt64, description="Number of deposits made")
+
+    @arc4.baremethod(allow_actions=["OptIn"])
     def OptIn(self) -> None:
-        # Initialise local state when the user opts in for the first time
-        self.user_goal[Txn.sender] = UInt64(0)  
-        self.user_balance[Txn.sender] = UInt64(0)  
+        self.user_goal[Txn.sender] = UInt64(0)
+        self.user_balance[Txn.sender] = UInt64(0)
+        self.user_withdraw_count[Txn.sender] = UInt64(0)
 
-    # Create a saver jar by setting the user's savings goal
+        # Initialize tracking vars
+        self.total_saved[Txn.sender] = UInt64(0)
+        self.last_user_goal[Txn.sender] = UInt64(0)
+        self.last_withdrawn[Txn.sender] = UInt64(0)
+        self.last_withdraw_time[Txn.sender] = UInt64(0)
+        self.highest_goal_achieved[Txn.sender] = UInt64(0)
+        self.average_deposit_amount[Txn.sender] = UInt64(0)
+        self.deposit_count[Txn.sender] = UInt64(0)
+
     @arc4.abimethod
     def create_saver_jar(self, goal_amount: UInt64) -> None:
-        # Set or update the user's goal and reset their balance
+        self.last_user_goal[Txn.sender] = self.user_goal[Txn.sender]
         self.user_goal[Txn.sender] = goal_amount
         self.user_balance[Txn.sender] = UInt64(0)
 
-    # Deposit funds into the saver jar
     @arc4.abimethod
     def deposit(self, deposit_txn: gtxn.PaymentTransaction) -> None:
-        # Ensure the deposit transaction is sent to the smart contract address
         assert deposit_txn.receiver == Global.current_application_address
 
-        # Update the user's balance with the deposit amount
         self.user_balance[Txn.sender] += deposit_txn.amount
+        self.total_saved[Txn.sender] += deposit_txn.amount
 
-    # Withdraw funds from the saver jar
+        # Update deposit count
+        self.deposit_count[Txn.sender] += UInt64(1)
+
+        # Update average deposit amount
+        total_saved = self.total_saved[Txn.sender]
+        count = self.deposit_count[Txn.sender]
+        self.average_deposit_amount[Txn.sender] = total_saved // count
+        
     @arc4.abimethod
     def withdraw(self) -> None:
-        # Retrieve the user's goal and current balance
         user_goal = self.user_goal[Txn.sender]
         user_balance = self.user_balance[Txn.sender]
-
-        # Ensure the user has reached or exceeded their savings goal
         assert user_balance >= user_goal
 
-        # Transfer the user's balance back to their account
+        self.user_withdraw_count[Txn.sender] += UInt64(1)
+        self.last_withdrawn[Txn.sender] = user_balance
+        self.last_withdraw_time[Txn.sender] = Global.latest_timestamp
+
+        if user_goal > self.highest_goal_achieved[Txn.sender]:
+            self.highest_goal_achieved[Txn.sender] = user_goal
+
         itxn.Payment(
             receiver=Txn.sender,
             amount=user_balance,
         ).submit()
 
-        # Reset the user's balance after withdrawal
         self.user_balance[Txn.sender] = UInt64(0)

@@ -2,7 +2,7 @@
 
 smart_contracts.saver_contract.contract.Saver.approval_program:
     intcblock 0 1
-    bytecblock "user_balance" "user_goal"
+    bytecblock "user_balance" "user_goal" "total_saved" "deposit_count" "user_withdraw_count" "highest_goal_achieved" "last_user_goal" "average_deposit_amount" "last_withdrawn" "last_withdraw_time"
     callsub __puya_arc4_router__
     return
 
@@ -83,6 +83,15 @@ __puya_arc4_router_____algopy_default_create@9:
 create_saver_jar:
     proto 1 0
     txn Sender
+    intc_0 // 0
+    bytec_1 // "user_goal"
+    app_local_get_ex
+    assert // check self.user_goal exists for account
+    txn Sender
+    bytec 6 // "last_user_goal"
+    uncover 2
+    app_local_put
+    txn Sender
     bytec_1 // "user_goal"
     frame_dig -1
     app_local_put
@@ -109,9 +118,50 @@ deposit:
     frame_dig -1
     gtxns Amount
     txn Sender
-    cover 2
+    uncover 2
+    dig 2
     +
     bytec_0 // "user_balance"
+    swap
+    app_local_put
+    txn Sender
+    intc_0 // 0
+    bytec_2 // "total_saved"
+    app_local_get_ex
+    assert // check self.total_saved exists for account
+    txn Sender
+    swap
+    uncover 2
+    +
+    bytec_2 // "total_saved"
+    swap
+    app_local_put
+    txn Sender
+    intc_0 // 0
+    bytec_3 // "deposit_count"
+    app_local_get_ex
+    assert // check self.deposit_count exists for account
+    txn Sender
+    swap
+    intc_1 // 1
+    +
+    bytec_3 // "deposit_count"
+    swap
+    app_local_put
+    txn Sender
+    intc_0 // 0
+    bytec_2 // "total_saved"
+    app_local_get_ex
+    assert // check self.total_saved exists for account
+    txn Sender
+    intc_0 // 0
+    bytec_3 // "deposit_count"
+    app_local_get_ex
+    assert // check self.deposit_count exists for account
+    txn Sender
+    cover 2
+    /
+    bytec 7 // "average_deposit_amount"
     swap
     app_local_put
     retsub
@@ -124,20 +174,61 @@ withdraw:
     intc_0 // 0
     bytec_1 // "user_goal"
     app_local_get_ex
+    swap
+    dup
+    uncover 2
     assert // check self.user_goal exists for account
     txn Sender
     intc_0 // 0
     bytec_0 // "user_balance"
     app_local_get_ex
+    swap
+    dup
+    cover 2
+    cover 3
     assert // check self.user_balance exists for account
     dup
-    uncover 2
+    dig 2
     >=
     assert
+    txn Sender
+    intc_0 // 0
+    bytec 4 // "user_withdraw_count"
+    app_local_get_ex
+    assert // check self.user_withdraw_count exists for account
+    txn Sender
+    swap
+    intc_1 // 1
+    +
+    bytec 4 // "user_withdraw_count"
+    swap
+    app_local_put
+    txn Sender
+    bytec 8 // "last_withdrawn"
+    uncover 2
+    app_local_put
+    txn Sender
+    bytec 9 // "last_withdraw_time"
+    global LatestTimestamp
+    app_local_put
+    txn Sender
+    intc_0 // 0
+    bytec 5 // "highest_goal_achieved"
+    app_local_get_ex
+    assert // check self.highest_goal_achieved exists for account
+    >
+    bz withdraw_after_if_else@2
+    txn Sender
+    bytec 5 // "highest_goal_achieved"
+    frame_dig 0
+    app_local_put
+
+withdraw_after_if_else@2:
     itxn_begin
     txn Sender
-    itxn_field Receiver
+    frame_dig 1
     itxn_field Amount
+    itxn_field Receiver
     intc_1 // pay
     itxn_field TypeEnum
     intc_0 // 0
@@ -159,6 +250,38 @@ OptIn:
     app_local_put
     txn Sender
     bytec_0 // "user_balance"
+    intc_0 // 0
+    app_local_put
+    txn Sender
+    bytec 4 // "user_withdraw_count"
+    intc_0 // 0
+    app_local_put
+    txn Sender
+    bytec_2 // "total_saved"
+    intc_0 // 0
+    app_local_put
+    txn Sender
+    bytec 6 // "last_user_goal"
+    intc_0 // 0
+    app_local_put
+    txn Sender
+    bytec 8 // "last_withdrawn"
+    intc_0 // 0
+    app_local_put
+    txn Sender
+    bytec 9 // "last_withdraw_time"
+    intc_0 // 0
+    app_local_put
+    txn Sender
+    bytec 5 // "highest_goal_achieved"
+    intc_0 // 0
+    app_local_put
+    txn Sender
+    bytec 7 // "average_deposit_amount"
+    intc_0 // 0
+    app_local_put
+    txn Sender
+    bytec_3 // "deposit_count"
     intc_0 // 0
     app_local_put
     retsub
