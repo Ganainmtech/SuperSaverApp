@@ -45,8 +45,8 @@ const StartSaver = ({ openModal, setModalState }: AppCallsInterface) => {
     enqueueSnackbar(message, { variant })
   }
 
-  const deployedAppID = 1015
-  const appAddress = '2KOUANKJKMEZK4WG5RWKG75DNFVQPK774XDVKVDUEZKW7ERORGIYHLSGDU'
+  const deployedAppID = 740798675
+  const appAddress = '32N7SIJ4XVABGJSHLOGBE47DQ3MIOXEAWUXBPYJVLKJ65LIA7CA2UX3CJ4'
 
   const sendAppCall = async () => {
     setLoading(true)
