@@ -87,7 +87,10 @@ const ViewSavings = () => {
   )
 
   return (
-    <div className="max-w-5xl mx-auto mt-10 bg-white shadow-xl rounded-2xl p-8 text-center">
+    <div className="relative max-w-5xl mx-auto mt-10 bg-white shadow-xl rounded-2xl p-8 text-center overflow-hidden">
+      {/* Animated top bar */}
+      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-teal-400 via-green-400 to-blue-400 animate-pulse rounded-t-2xl" />
+
       <h2 className="text-3xl font-bold text-teal-600 mb-6">💡 Your Savings Dashboard</h2>
 
       {loading ? (

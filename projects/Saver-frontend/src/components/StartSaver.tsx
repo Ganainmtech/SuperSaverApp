@@ -3,7 +3,7 @@ import { TransactionSignerAccount } from '@algorandfoundation/algokit-utils/type
 import { AppDetails } from '@algorandfoundation/algokit-utils/types/app-client'
 import { useWallet } from '@txnlab/use-wallet'
 import { useSnackbar } from 'notistack'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { SaverClient } from '../contracts/Saver'
 import { getAlgodConfigFromViteEnvironment } from '../utils/network/getAlgoClientConfigs'
@@ -14,26 +14,20 @@ interface AppCallsInterface {
 }
 
 const StartSaver = ({ openModal, setModalState }: AppCallsInterface) => {
-  const [openWalletModal, setOpenWalletModal] = useState(false)
-  const [loading, setLoading] = useState<boolean>(false)
-  const [appIdInput, setAppIdInput] = useState<string>('')
+  const [loading, setLoading] = useState(false)
   const [goalInput, setGoalInput] = useState('')
   const [depositInput, setDepositInput] = useState('')
+  const [alreadyOptedIn, setAlreadyOptedIn] = useState(false)
+  const [currentGoal, setCurrentGoal] = useState<number | null>(null)
+  const [currentBalance, setCurrentBalance] = useState<number | null>(null)
+
   const navigate = useNavigate()
-
-  const toggleWalletModal = () => {
-    setOpenWalletModal(!openWalletModal)
-  }
-
-  const algodConfig = getAlgodConfigFromViteEnvironment()
-  const algodClient = algokit.getAlgoClient({
-    server: algodConfig.server,
-    port: algodConfig.port,
-    token: algodConfig.token,
-  })
-
   const { enqueueSnackbar } = useSnackbar()
   const { signer, activeAddress } = useWallet()
+
+  const deployedAppID = 740800501
+  const appAddress = 'NSBKY7G5NNYVF2BKIJL6MAJ4QW6PZSDFMGNQ3EDULAKHBWX2MPK6YZLS2A'
+  const algodClient = algokit.getAlgoClient(getAlgodConfigFromViteEnvironment())
 
   const getAppDetails = (appId: number): AppDetails => ({
     resolveBy: 'id',
@@ -45,27 +39,36 @@ const StartSaver = ({ openModal, setModalState }: AppCallsInterface) => {
     enqueueSnackbar(message, { variant })
   }
 
-  const deployedAppID = 740800501
-  const appAddress = 'NSBKY7G5NNYVF2BKIJL6MAJ4QW6PZSDFMGNQ3EDULAKHBWX2MPK6YZLS2A'
+  const refreshState = async () => {
+    if (!activeAddress) return
+
+    const appClient = new SaverClient(getAppDetails(deployedAppID), algodClient)
+    try {
+      const local = await appClient.getLocalState(activeAddress)
+      setAlreadyOptedIn(true)
+      setCurrentGoal(local.userGoal?.asNumber() || null)
+      setCurrentBalance(local.userBalance?.asNumber() || null)
+    } catch {
+      setAlreadyOptedIn(false)
+      setCurrentGoal(null)
+      setCurrentBalance(null)
+    }
+  }
+
+  useEffect(() => {
+    refreshState()
+  }, [activeAddress])
 
   const sendAppCall = async () => {
     setLoading(true)
-
     try {
-      /*const appId = parseInt(appIdInput, 10)
-      if (isNaN(appId)) {
-        showSnackbar('Invalid App ID. Please enter a valid number.', 'error')
-        return
-      }*/
-
       const appClient = new SaverClient(getAppDetails(deployedAppID), algodClient)
-
       const optInResponse = await appClient.optIn
       await optInResponse.bare()
-
       showSnackbar('Successfully opted into the app!', 'success')
-    } catch (error) {
-      showSnackbar('Error during opt-in. Check the console for details.', 'error')
+      await refreshState()
+    } catch {
+      showSnackbar('Error during opt-in.', 'error')
     } finally {
       setLoading(false)
     }
@@ -73,26 +76,19 @@ const StartSaver = ({ openModal, setModalState }: AppCallsInterface) => {
 
   const sendGoalTxn = async () => {
     setLoading(true)
-
     try {
-      //const appId = parseInt(appIdInput, 10)
       const goalAmount = parseInt(goalInput, 10)
-
       if (isNaN(goalAmount) || goalAmount <= 0) {
-        showSnackbar('Invalid goal amount. Please enter a valid number.', 'error')
+        showSnackbar('Invalid goal amount.', 'error')
         return
       }
-
-      // Manually convert to microAlgos
-      const microAlgosAmount = goalAmount * 1000000
-
+      const microAlgos = goalAmount * 1_000_000
       const appClient = new SaverClient(getAppDetails(deployedAppID), algodClient)
-
-      const setGoalResponse = await appClient.createSaverJar({ goalAmount: microAlgosAmount })
-
-      showSnackbar('Savings goal set successfully!', 'success')
-    } catch (error) {
-      showSnackbar('Error during goal setting. Check the console for details.', 'error')
+      await appClient.createSaverJar({ goalAmount: microAlgos })
+      showSnackbar('Savings goal set!', 'success')
+      await refreshState()
+    } catch {
+      showSnackbar('Error setting goal.', 'error')
     } finally {
       setLoading(false)
     }
@@ -100,54 +96,27 @@ const StartSaver = ({ openModal, setModalState }: AppCallsInterface) => {
 
   const depositFunds = async () => {
     setLoading(true)
-
     try {
-      //const appId = parseInt(appIdInput, 10)
-      const depositAmount = parseInt(depositInput, 10)
-
-      if (isNaN(deployedAppID)) {
-        showSnackbar('Invalid App ID. Please enter a valid number.', 'error')
+      const amount = parseInt(depositInput, 10)
+      if (isNaN(amount) || amount <= 0) {
+        showSnackbar('Invalid deposit amount.', 'error')
         return
       }
-
-      if (isNaN(depositAmount) || depositAmount <= 0) {
-        showSnackbar('Invalid deposit amount. Please enter a valid number.', 'error')
-        return
-      }
-
-      // Initialize app client
       const appClient = new SaverClient(getAppDetails(deployedAppID), algodClient)
-
-      // Create the payment transaction
       const paymentTxn = await algokit.transferAlgos(
         {
-          from: {
-            addr: activeAddress || '', // Sender's address and fallback (left blank for now)
-            signer, // Signer for the transaction
-          },
-          to: appAddress, // App contract address
-          amount: algokit.algos(depositAmount), // Deposit amount
-          skipSending: true, // Do not send immediately
+          from: { addr: activeAddress || '', signer },
+          to: appAddress,
+          amount: algokit.algos(amount),
+          skipSending: true,
         },
         algodClient,
       )
-
-      // Call the deposit method
-      const depositResponse = await appClient.deposit(
-        {
-          depositTxn: paymentTxn.transaction, // Pass the payment transaction using the correct argument name
-        },
-        {
-          sender: {
-            addr: activeAddress || '', // Sender's address and fallback (left blank for now)
-            signer, // Signer for the transaction
-          },
-        },
-      )
-
-      showSnackbar('Funds deposited successfully!', 'success')
-    } catch (error) {
-      showSnackbar('Error during deposit. Check the console for details.', 'error')
+      await appClient.deposit({ depositTxn: paymentTxn.transaction }, { sender: { addr: activeAddress!, signer } })
+      showSnackbar('Deposit successful!', 'success')
+      await refreshState()
+    } catch {
+      showSnackbar('Error during deposit.', 'error')
     } finally {
       setLoading(false)
     }
@@ -155,173 +124,140 @@ const StartSaver = ({ openModal, setModalState }: AppCallsInterface) => {
 
   const withdrawFunds = async () => {
     setLoading(true)
-
     try {
-      // Parse the App ID
-      //const appId = parseInt(appIdInput, 10)
-
-      // Initialise the app client
       const appClient = new SaverClient(getAppDetails(deployedAppID), algodClient)
-
-      // Call the withdraw method
-      const withdrawResponse = await appClient.withdraw(
-        {}, // No arguments needed for the withdraw ABI
+      await appClient.withdraw(
+        {},
         {
-          sender: {
-            addr: activeAddress || '',
-            signer,
-          },
-          sendParams: {
-            fee: algokit.microAlgos(2000), // Use the MicroAlgos method to create an AlgoAmount
-          },
+          sender: { addr: activeAddress || '', signer },
+          sendParams: { fee: algokit.microAlgos(2000) },
         },
       )
-
-      showSnackbar('Funds withdrawn successfully!', 'success')
-    } catch (error) {
-      showSnackbar('Error during withdrawal. Check the console for details.', 'error')
+      showSnackbar('Withdrawal complete!', 'success')
+      await refreshState()
+    } catch {
+      showSnackbar('Error during withdrawal.', 'error')
     } finally {
       setLoading(false)
     }
   }
 
+  const progressPercent = currentGoal && currentBalance ? Math.min(Math.round((currentBalance / currentGoal) * 100), 100) : 0
+
+  const progressColor = progressPercent >= 100 ? 'bg-green-500' : 'bg-blue-400'
+
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-teal-100 to-teal-50">
-      {/* Header */}
-      <header className="bg-teal-500 text-white py-4 px-8 shadow-md">
-        <div className="flex justify-between items-center">
-          <h1 className="text-4xl font-extrabold tracking-wider">💰 Start Saving</h1>
-          <nav className="flex items-center space-x-4">
-            <a href="/" className="hover:underline">
-              Home
-            </a>
-            <a href="/StartSuperSaver" className="hover:underline">
-              Start Saving
-            </a>
-            <a href="/ViewSavings" className="hover:underline">
-              Your Savings
-            </a>
-            <a href="/about" className="hover:underline">
-              About
-            </a>
-            <button
-              className="btn btn-outline btn-sm bg-white text-teal-500 border-teal-500 hover:bg-teal-600 hover:text-white"
-              onClick={toggleWalletModal}
-            >
-              {activeAddress ? 'Wallet Connected' : 'Connect Wallet'}
-            </button>
-          </nav>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gradient-to-b from-teal-100 to-white py-10 px-6">
+      <div className="relative max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl p-10 overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-teal-400 via-green-400 to-blue-400 animate-pulse rounded-t-2xl" />
 
-      <main className="flex-grow p-6 sm:p-8">
-        {/* Main Container */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-          {/* Left Side: Create Saver Jar & Set Goal */}
-          <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-xl transition-all duration-300 flex flex-col items-center justify-center">
-            <h2 className="text-xl sm:text-2xl font-semibold text-teal-700">Create your Savings Jar</h2>
-
-            {/* Create Saver Jar Section */}
+        <h1 className="text-4xl font-bold text-teal-600 mb-6 text-center">🚀 Start Your Savings Journey</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="bg-teal-50 p-6 rounded-2xl shadow-md hover:shadow-lg transition-all">
+            <h2 className="text-2xl font-semibold text-teal-700 mb-4">🔐 Create Saver Jar</h2>
             <button
-              className={`btn mt-4 w-full sm:w-72 bg-teal-500 text-white font-semibold py-4 px-6 rounded-xl hover:bg-teal-600 transition-all duration-200`}
               onClick={sendAppCall}
-              disabled={loading}
+              disabled={alreadyOptedIn || loading}
+              className={`w-full py-3 rounded-xl font-semibold text-white transition-all duration-300 ${
+                alreadyOptedIn ? 'bg-gray-400 cursor-not-allowed' : 'bg-teal-500 hover:bg-teal-600'
+              }`}
             >
-              {loading ? (
-                <div className="spinner-border animate-spin w-6 h-6 border-4 border-white border-t-teal-200 rounded-full" />
-              ) : (
-                "Create Saver's Jar"
-              )}
+              {alreadyOptedIn ? 'Jar Already Created' : loading ? 'Processing...' : "Create Saver's Jar"}
             </button>
-            <p className="mt-4 text-sm text-teal-500 text-center">You are opting into a smart contract for your savings.</p>
+            <p className="text-sm text-teal-600 mt-4 text-center">Opt your wallet into the smart savings contract.</p>
 
-            {/* Set Savings Goal Section */}
-            <h2 className="text-xl sm:text-2xl font-semibold text-teal-700 mt-6">Set Goal</h2>
-            <div className="justify-center">
-              <label className="block text-center w-full sm:w-auto">
-                <div className="flex flex-col sm:flex-row gap-4 mt-4 sm:mt-6 w-full items-center justify-center">
-                  Goal Amount:
-                  <input
-                    type="text"
-                    className="input input-bordered w-full sm:w-48 rounded-lg border-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all"
-                    value={goalInput}
-                    onChange={(e) => setGoalInput(e.target.value)}
-                    placeholder="Enter Amount"
-                  />
-                  <button
-                    className={`btn sm:w-32 ml-2 bg-teal-500 text-white font-semibold py-2 rounded-xl hover:bg-teal-600 transition-all duration-200`}
-                    onClick={sendGoalTxn}
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <div className="spinner-border animate-spin w-6 h-6 border-4 border-white border-t-teal-200 rounded-full" />
-                    ) : (
-                      'Set Goal'
-                    )}
-                  </button>
-                </div>
-              </label>
+            <h3 className="text-lg font-medium text-teal-700 mt-6">🎯 Set a Goal</h3>
+            <div className="flex gap-2 mt-3">
+              <input
+                type="text"
+                value={goalInput}
+                onChange={(e) => setGoalInput(e.target.value)}
+                placeholder="e.g. 10 ALGO"
+                className="input input-bordered w-full rounded-md border-teal-300"
+              />
+              <button
+                onClick={sendGoalTxn}
+                disabled={loading || (currentBalance || 0) > 0}
+                className={`px-4 py-2 rounded-lg font-semibold transition-all duration-300 ${
+                  (currentBalance || 0) > 0 ? 'bg-gray-400 cursor-not-allowed text-white' : 'bg-teal-500 hover:bg-teal-600 text-white'
+                }`}
+              >
+                {loading ? '...' : 'Set Goal'}
+              </button>
             </div>
+            {(currentBalance || 0) > 0 && (
+              <p className="text-sm text-red-500 mt-2 text-center">You can't change your goal after depositing.</p>
+            )}
           </div>
 
-          {/* Right Side: Deposit & Withdraw */}
-          <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-xl transition-all duration-300 flex flex-col items-center justify-center">
-            <h2 className="text-xl sm:text-2xl font-semibold text-teal-700">Deposit Funds</h2>
+          <div className="bg-teal-50 p-6 rounded-2xl shadow-md hover:shadow-lg transition-all">
+            <h2 className="text-2xl font-semibold text-teal-700 mb-4">💸 Manage Funds</h2>
 
-            {/* Deposit Funds Section */}
-            <div className="justify-center">
-              <label className="block text-center w-full sm:w-auto">
-                <div className="flex flex-col sm:flex-row gap-4 mt-4 sm:mt-6 w-full items-center justify-center">
-                  Deposit Amount:
-                  <input
-                    type="text"
-                    className="input input-bordered w-full sm:w-48 rounded-lg border-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all"
-                    value={depositInput}
-                    onChange={(e) => setDepositInput(e.target.value)}
-                    placeholder="Enter Amount"
-                  />
-                  <button
-                    className={`btn sm:w-32 ml-2 bg-teal-500 text-white font-semibold py-2 rounded-xl hover:bg-teal-600 transition-all duration-200`}
-                    onClick={depositFunds}
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <div className="spinner-border animate-spin w-6 h-6 border-4 border-white border-t-teal-200 rounded-full" />
-                    ) : (
-                      'Deposit'
-                    )}
-                  </button>
-                </div>
-              </label>
+            {currentGoal !== null && currentBalance !== null && (
+              <div className="flex justify-between text-sm text-teal-700 mb-4">
+                <p>
+                  🎯 Current Goal: <strong>{(currentGoal / 1e6).toFixed(2)} ALGO</strong>
+                </p>
+                <p>
+                  💰 Current Savings: <strong>{(currentBalance / 1e6).toFixed(2)} ALGO</strong>
+                </p>
+              </div>
+            )}
+
+            <h3 className="text-lg font-medium text-teal-700">Deposit</h3>
+            <div className="flex gap-2 mt-3">
+              <input
+                type="text"
+                value={depositInput}
+                onChange={(e) => setDepositInput(e.target.value)}
+                placeholder="e.g. 5 ALGO"
+                className="input input-bordered w-full rounded-md border-teal-300"
+              />
+              <button
+                onClick={depositFunds}
+                disabled={loading}
+                className="px-4 py-2 rounded-lg bg-teal-500 hover:bg-teal-600 text-white font-semibold"
+              >
+                {loading ? '...' : 'Deposit'}
+              </button>
             </div>
 
-            {/* Withdraw Funds Section */}
-            <h2 className="text-xl sm:text-2xl font-semibold text-teal-700 mt-6">Withdraw Savings</h2>
-
+            <h3 className="text-lg font-medium text-teal-700 mt-6">Withdraw</h3>
             <button
-              className="btn mt-4 sm:mt-6 w-full sm:w-72 bg-teal-500 text-white font-semibold py-4 px-6 rounded-xl hover:bg-teal-600 transition-all duration-200"
               onClick={withdrawFunds}
+              className={`mt-3 w-full py-3 rounded-xl text-white font-semibold transition ${
+                currentBalance !== null && currentGoal !== null && currentBalance >= currentGoal
+                  ? 'bg-teal-500 animate-pulse hover:bg-teal-600'
+                  : 'bg-teal-500 hover:bg-teal-600'
+              }`}
             >
-              Withdraw Savings
+              Withdraw Funds
             </button>
-            <p className="mt-4 text-sm text-teal-500 text-center">Withdraw all funds that have reached or exceeded your set goal.</p>
+            <p className="text-sm text-teal-600 mt-4 text-center">Withdraw once you've hit your savings goal.</p>
           </div>
         </div>
 
-        {/* Back to Home */}
-        <div className="text-center mt-8">
+        {currentGoal && currentBalance !== null && (
+          <div className="mt-10">
+            <div className="w-full bg-gray-200 rounded-full h-4">
+              <div className={`${progressColor} h-4 rounded-full transition-all duration-500`} style={{ width: `${progressPercent}%` }} />
+            </div>
+            <p className="text-sm mt-1 text-center text-gray-600">{progressPercent}% of goal reached</p>
+          </div>
+        )}
+
+        <div className="text-center mt-10 flex flex-col sm:flex-row justify-center gap-4">
+          <button onClick={() => navigate('/')} className="px-6 py-3 rounded-xl bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold">
+            ⬅ Back to Home
+          </button>
           <button
-            className="btn bg-teal-400 text-white font-semibold py-2 px-6 rounded-lg hover:bg-teal-500 transition-transform"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/ViewSavings')}
+            className="px-6 py-3 rounded-xl bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold"
           >
-            Back to Home
+            📈 View Savings
           </button>
         </div>
-      </main>
-
-      <footer className="bg-teal-400 text-white py-4 text-center mt-10">
-        <p>© 2024 Super Saver App. All rights reserved.</p>
-      </footer>
+      </div>
     </div>
   )
 }

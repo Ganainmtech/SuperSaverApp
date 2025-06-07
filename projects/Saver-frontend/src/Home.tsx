@@ -9,9 +9,7 @@ const Home: React.FC = () => {
   const { activeAddress } = useWallet()
   const navigate = useNavigate()
 
-  const toggleWalletModal = () => {
-    setOpenWalletModal(!openWalletModal)
-  }
+  const toggleWalletModal = () => setOpenWalletModal(!openWalletModal)
 
   const handleGetStarted = () => {
     setIsFormVisible(true)
@@ -29,12 +27,12 @@ const Home: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-teal-100 to-white">
       {/* Header */}
-      <header className="bg-teal-500 text-white py-4 px-8 shadow-md">
+      <header className="bg-teal-500 text-white py-5 px-8 shadow-lg">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Super Saver App</h1>
-          <nav className="flex items-center space-x-4">
+          <h1 className="text-3xl font-extrabold tracking-wide">Super Saver App</h1>
+          <nav className="flex items-center space-x-5">
             <a href="#home" className="hover:underline">
               Home
             </a>
@@ -57,34 +55,55 @@ const Home: React.FC = () => {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-grow bg-teal-100 py-10">
-        <section id="home" className="text-center mb-10">
-          <h2 className="text-4xl font-bold text-teal-700">Welcome to Super Saver App</h2>
-          <p className="text-teal-600 mt-4">Your journey to reaching financial goals starts here.</p>
+      <main className="flex-grow bg-gradient-to-b from-teal-50 to-teal-100">
+        {/* Hero Section */}
+        <section className="flex flex-col justify-center items-center text-center py-16 px-4 sm:px-8">
+          <h2 className="text-5xl font-bold text-teal-700 leading-tight drop-shadow-sm">
+            Your Journey to <span className="text-teal-600">Financial Freedom</span> Begins Now
+          </h2>
+          <p className="text-teal-600 mt-4 text-lg max-w-2xl">
+            Build your savings the smart way — secure, simple, and stress-free with Super Saver.
+          </p>
+          <button
+            className="mt-8 px-8 py-3 bg-teal-500 hover:bg-teal-600 text-white rounded-full font-semibold shadow-md transition-all"
+            onClick={handleGetStarted}
+          >
+            🚀 Get Started
+          </button>
         </section>
 
-        {/* Actionable Boxes */}
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
-          <div className="bg-white p-6 rounded shadow-md">
-            <h3 className="text-xl font-semibold text-teal-800">Start Saving</h3>
-            <p className="text-teal-600 mt-2">Set up your savings goal and start depositing funds.</p>
-            <button className="btn btn-primary mt-4 w-full" onClick={handleGetStarted}>
-              Get Started
+        {/* Actionable Sections */}
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-6 pb-16 max-w-6xl mx-auto">
+          <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-transform transform hover:scale-[1.02]">
+            <h3 className="text-xl font-bold text-teal-800 mb-2">Start Saving</h3>
+            <p className="text-teal-600">Set your savings goal and open your personal smart contract vault.</p>
+            <button
+              className="mt-4 w-full px-5 py-3 bg-emerald-200 hover:bg-emerald-300 text-teal-900 font-semibold rounded-xl shadow-sm transition-all"
+              onClick={handleGetStarted}
+            >
+              🌱 Get Started
             </button>
           </div>
-          <div className="bg-white p-6 rounded shadow-md">
-            <h3 className="text-xl font-semibold text-teal-800">View Your Savings</h3>
-            <p className="text-teal-600 mt-2">Track and manage your savings progress.</p>
-            <button className="btn btn-primary mt-4 w-full" onClick={handleViewSavings}>
-              View Savings
+
+          <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-transform transform hover:scale-[1.02]">
+            <h3 className="text-xl font-bold text-teal-800 mb-2">View Your Savings</h3>
+            <p className="text-teal-600">Keep tabs on your progress and withdraw when you hit your goal.</p>
+            <button
+              className="mt-4 w-full px-5 py-3 bg-yellow-200 hover:bg-yellow-300 text-teal-900 font-semibold rounded-xl shadow-sm transition-all"
+              onClick={handleViewSavings}
+            >
+              📈 View Savings
             </button>
           </div>
-          <div className="bg-white p-6 rounded shadow-md">
-            <h3 className="text-xl font-semibold text-teal-800">Learn More</h3>
-            <p className="text-teal-600 mt-2">Discover how the Super Saver App works for you.</p>
-            <button className="btn btn-primary mt-4 w-full" onClick={handleViewAboutSaver}>
-              Learn More
+
+          <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-transform transform hover:scale-[1.02]">
+            <h3 className="text-xl font-bold text-teal-800 mb-2">Learn More</h3>
+            <p className="text-teal-600">Understand how Super Saver empowers smart, goal-based saving.</p>
+            <button
+              className="mt-4 w-full px-5 py-3 bg-sky-200 hover:bg-sky-300 text-teal-900 font-semibold rounded-xl shadow-sm transition-all"
+              onClick={handleViewAboutSaver}
+            >
+              📘 Learn More
             </button>
           </div>
         </section>
@@ -93,7 +112,7 @@ const Home: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-teal-500 text-white py-4 px-8 text-center">
+      <footer className="bg-teal-400 text-white py-4 text-center mt-auto">
         <p>© 2024 Super Saver App. All rights reserved.</p>
       </footer>
 
