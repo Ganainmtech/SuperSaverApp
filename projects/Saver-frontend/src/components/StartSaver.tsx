@@ -1,7 +1,7 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account'
 import { AppDetails } from '@algorandfoundation/algokit-utils/types/app-client'
-import { useWallet } from '@txnlab/use-wallet'
+import { useWallet } from '@txnlab/use-wallet-react'
 import { useSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -23,17 +23,21 @@ const StartSaver = ({ openModal, setModalState }: AppCallsInterface) => {
 
   const navigate = useNavigate()
   const { enqueueSnackbar } = useSnackbar()
-  const { signer, activeAddress } = useWallet()
+  const { activeAddress, transactionSigner } = useWallet()
+  const signer = transactionSigner
 
-  const deployedAppID = 740800501
+  const deployedAppID = 740800501n
   const appAddress = 'NSBKY7G5NNYVF2BKIJL6MAJ4QW6PZSDFMGNQ3EDULAKHBWX2MPK6YZLS2A'
   const algodClient = algokit.getAlgoClient(getAlgodConfigFromViteEnvironment())
 
-  const getAppDetails = (appId: number): AppDetails => ({
-    resolveBy: 'id',
-    sender: { signer, addr: activeAddress } as TransactionSignerAccount,
-    id: appId,
-  })
+  const getAppDetails = (appId: bigint): AppDetails => {
+    console.log('[AppDetails] Active address:', activeAddress)
+    return {
+      resolveBy: 'id',
+      sender: { signer, addr: activeAddress! } as TransactionSignerAccount,
+      id: Number(appId),
+    }
+  }
 
   const showSnackbar = (message: string, variant: 'success' | 'error') => {
     enqueueSnackbar(message, { variant })
@@ -41,14 +45,24 @@ const StartSaver = ({ openModal, setModalState }: AppCallsInterface) => {
 
   const refreshState = async () => {
     if (!activeAddress) return
-
-    const appClient = new SaverClient(getAppDetails(deployedAppID), algodClient)
     try {
-      const local = await appClient.getLocalState(activeAddress)
+      const accountInfo = await algodClient.accountInformation(activeAddress).do()
+      const appLocalState = accountInfo.appsLocalState?.find((app) => app.id === deployedAppID)
+      const keyValue = appLocalState?.keyValue || []
+
+      const getUintValue = (key: string) => {
+        const entry = keyValue.find((kv: any) => {
+          const decodedKey = Buffer.from(kv.key, 'base64').toString()
+          return decodedKey === key
+        })
+        return entry ? Number(entry.value.uint) : 0
+      }
+
       setAlreadyOptedIn(true)
-      setCurrentGoal(local.userGoal?.asNumber() || null)
-      setCurrentBalance(local.userBalance?.asNumber() || null)
-    } catch {
+      setCurrentGoal(getUintValue('user_goal'))
+      setCurrentBalance(getUintValue('user_balance'))
+    } catch (err) {
+      console.error('[refreshState] Failed to get local state:', err)
       setAlreadyOptedIn(false)
       setCurrentGoal(null)
       setCurrentBalance(null)
@@ -56,10 +70,12 @@ const StartSaver = ({ openModal, setModalState }: AppCallsInterface) => {
   }
 
   useEffect(() => {
+    console.log('[useEffect] activeAddress changed:', activeAddress)
     refreshState()
   }, [activeAddress])
 
   const sendAppCall = async () => {
+    if (!activeAddress) return showSnackbar('Connect your wallet first.', 'error')
     setLoading(true)
     try {
       const appClient = new SaverClient(getAppDetails(deployedAppID), algodClient)
@@ -67,7 +83,8 @@ const StartSaver = ({ openModal, setModalState }: AppCallsInterface) => {
       await optInResponse.bare()
       showSnackbar('Successfully opted into the app!', 'success')
       await refreshState()
-    } catch {
+    } catch (err) {
+      console.error('[sendAppCall] Error:', err)
       showSnackbar('Error during opt-in.', 'error')
     } finally {
       setLoading(false)
@@ -75,6 +92,7 @@ const StartSaver = ({ openModal, setModalState }: AppCallsInterface) => {
   }
 
   const sendGoalTxn = async () => {
+    if (!activeAddress) return showSnackbar('Connect your wallet first.', 'error')
     setLoading(true)
     try {
       const goalAmount = parseInt(goalInput, 10)
@@ -87,7 +105,8 @@ const StartSaver = ({ openModal, setModalState }: AppCallsInterface) => {
       await appClient.createSaverJar({ goalAmount: microAlgos })
       showSnackbar('Savings goal set!', 'success')
       await refreshState()
-    } catch {
+    } catch (err) {
+      console.error('[sendGoalTxn] Error:', err)
       showSnackbar('Error setting goal.', 'error')
     } finally {
       setLoading(false)
@@ -95,6 +114,7 @@ const StartSaver = ({ openModal, setModalState }: AppCallsInterface) => {
   }
 
   const depositFunds = async () => {
+    if (!activeAddress) return showSnackbar('Connect your wallet first.', 'error')
     setLoading(true)
     try {
       const amount = parseInt(depositInput, 10)
@@ -105,17 +125,18 @@ const StartSaver = ({ openModal, setModalState }: AppCallsInterface) => {
       const appClient = new SaverClient(getAppDetails(deployedAppID), algodClient)
       const paymentTxn = await algokit.transferAlgos(
         {
-          from: { addr: activeAddress || '', signer },
+          from: { addr: activeAddress, signer },
           to: appAddress,
           amount: algokit.algos(amount),
           skipSending: true,
         },
         algodClient,
       )
-      await appClient.deposit({ depositTxn: paymentTxn.transaction }, { sender: { addr: activeAddress!, signer } })
+      await appClient.deposit({ depositTxn: paymentTxn.transaction }, { sender: { addr: activeAddress, signer } })
       showSnackbar('Deposit successful!', 'success')
       await refreshState()
-    } catch {
+    } catch (err) {
+      console.error('[depositFunds] Error:', err)
       showSnackbar('Error during deposit.', 'error')
     } finally {
       setLoading(false)
@@ -123,19 +144,21 @@ const StartSaver = ({ openModal, setModalState }: AppCallsInterface) => {
   }
 
   const withdrawFunds = async () => {
+    if (!activeAddress) return showSnackbar('Connect your wallet first.', 'error')
     setLoading(true)
     try {
       const appClient = new SaverClient(getAppDetails(deployedAppID), algodClient)
       await appClient.withdraw(
         {},
         {
-          sender: { addr: activeAddress || '', signer },
+          sender: { addr: activeAddress, signer },
           sendParams: { fee: algokit.microAlgos(2000) },
         },
       )
       showSnackbar('Withdrawal complete!', 'success')
       await refreshState()
-    } catch {
+    } catch (err) {
+      console.error('[withdrawFunds] Error:', err)
       showSnackbar('Error during withdrawal.', 'error')
     } finally {
       setLoading(false)
@@ -143,7 +166,6 @@ const StartSaver = ({ openModal, setModalState }: AppCallsInterface) => {
   }
 
   const progressPercent = currentGoal && currentBalance ? Math.min(Math.round((currentBalance / currentGoal) * 100), 100) : 0
-
   const progressColor = progressPercent >= 100 ? 'bg-green-500' : 'bg-blue-400'
 
   return (

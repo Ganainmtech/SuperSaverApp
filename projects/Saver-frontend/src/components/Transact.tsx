@@ -1,3 +1,4 @@
+/*
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { useWallet } from '@txnlab/use-wallet'
 import algosdk from 'algosdk'
@@ -92,4 +93,6 @@ const Transact = ({ openModal, setModalState }: TransactInterface) => {
   )
 }
 
+
 export default Transact
+*/

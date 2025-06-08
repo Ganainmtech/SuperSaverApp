@@ -1,67 +1,38 @@
-import { DeflyWalletConnect } from '@blockshake/defly-connect'
-import { DaffiWalletConnect } from '@daffiwallet/connect'
-import { PeraWalletConnect } from '@perawallet/connect'
-import { PROVIDER_ID, ProvidersArray, WalletProvider, useInitializeProviders } from '@txnlab/use-wallet'
-import algosdk from 'algosdk'
+import { NetworkId, WalletId, WalletManager, WalletProvider } from '@txnlab/use-wallet-react'
+import { WalletButton, WalletUIProvider } from '@txnlab/use-wallet-ui-react'
+import '@txnlab/use-wallet-ui-react/dist/style.css'
+
 import { SnackbarProvider } from 'notistack'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+
 import Home from './Home'
+import AboutSaver from './components/AboutSaver'
 import StartSaver from './components/StartSaver'
 import ViewSavings from './components/ViewSavings'
-import { getAlgodConfigFromViteEnvironment, getKmdConfigFromViteEnvironment } from './utils/network/getAlgoClientConfigs'
-import AboutSaver from './components/AboutSaver'
 
-let providersArray: ProvidersArray
-
-if (import.meta.env.VITE_ALGOD_NETWORK === '') {
-  const kmdConfig = getKmdConfigFromViteEnvironment()
-  providersArray = [
-    {
-      id: PROVIDER_ID.KMD,
-      clientOptions: {
-        wallet: kmdConfig.wallet,
-        password: kmdConfig.password,
-        host: kmdConfig.server,
-        token: String(kmdConfig.token),
-        port: String(kmdConfig.port),
-      },
-    },
-  ]
-} else {
-  providersArray = [
-    { id: PROVIDER_ID.DEFLY, clientStatic: DeflyWalletConnect },
-    { id: PROVIDER_ID.PERA, clientStatic: PeraWalletConnect },
-    { id: PROVIDER_ID.DAFFI, clientStatic: DaffiWalletConnect },
-    { id: PROVIDER_ID.EXODUS },
-    // For WalletConnect v2 provider, refer to https://github.com/TxnLab/use-wallet for integration instructions
-  ]
-}
+const walletManager = new WalletManager({
+  wallets: [WalletId.PERA, WalletId.DEFLY, WalletId.EXODUS],
+  defaultNetwork: NetworkId.TESTNET,
+})
 
 export default function App() {
-  const algodConfig = getAlgodConfigFromViteEnvironment()
-
-  const walletProviders = useInitializeProviders({
-    providers: providersArray,
-    nodeConfig: {
-      network: algodConfig.network,
-      nodeServer: algodConfig.server,
-      nodePort: String(algodConfig.port),
-      nodeToken: String(algodConfig.token),
-    },
-    algosdkStatic: algosdk,
-  })
-
   return (
     <SnackbarProvider maxSnack={3}>
-      <WalletProvider value={walletProviders}>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/StartSuperSaver" element={<StartSaver openModal={true} setModalState={() => {}} />} />
-            <Route path="/ViewSavings" element={<ViewSavings />} />
-            <Route path="/AboutSaver" element={<AboutSaver />} />
-          </Routes>
-        </Router>
+      <WalletProvider manager={walletManager}>
+        <WalletUIProvider>
+          <Router>
+            {/* Wallet Connect Button (top right corner) */}
+            <div data-wallet-ui style={{ position: 'fixed', top: 20, right: 20, zIndex: 1000 }}>
+              <WalletButton />
+            </div>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/StartSuperSaver" element={<StartSaver openModal={true} setModalState={() => {}} />} />
+              <Route path="/ViewSavings" element={<ViewSavings />} />
+              <Route path="/AboutSaver" element={<AboutSaver />} />
+            </Routes>
+          </Router>
+        </WalletUIProvider>
       </WalletProvider>
     </SnackbarProvider>
   )

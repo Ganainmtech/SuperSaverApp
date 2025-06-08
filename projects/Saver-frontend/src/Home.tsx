@@ -1,7 +1,6 @@
-import { useWallet } from '@txnlab/use-wallet'
+import { useWallet } from '@txnlab/use-wallet-react'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import ConnectWallet from './components/ConnectWallet'
 
 const Home: React.FC = () => {
   const [openWalletModal, setOpenWalletModal] = useState(false)
@@ -32,26 +31,6 @@ const Home: React.FC = () => {
       <header className="bg-teal-500 text-white py-5 px-8 shadow-lg">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-extrabold tracking-wide">Super Saver App</h1>
-          <nav className="flex items-center space-x-5">
-            <a href="#home" className="hover:underline">
-              Home
-            </a>
-            <a href="/StartSuperSaver" className="hover:underline">
-              Start Saving
-            </a>
-            <a href="/ViewSavings" className="hover:underline">
-              Your Savings
-            </a>
-            <a href="/AboutSaver" className="hover:underline">
-              About
-            </a>
-            <button
-              className="btn btn-outline btn-sm bg-white text-teal-500 border-teal-500 hover:bg-teal-600 hover:text-white"
-              onClick={toggleWalletModal}
-            >
-              {activeAddress ? 'Wallet Connected' : 'Connect Wallet'}
-            </button>
-          </nav>
         </div>
       </header>
 
@@ -117,7 +96,7 @@ const Home: React.FC = () => {
       </footer>
 
       {/* Wallet Modal */}
-      <ConnectWallet openModal={openWalletModal} closeModal={toggleWalletModal} />
+      {/* <ConnectWallet openModal={openWalletModal} closeModal={toggleWalletModal} /> */}
     </div>
   )
 }
