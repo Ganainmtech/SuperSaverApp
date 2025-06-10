@@ -1,11 +1,12 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
+import { TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account'
 import { AppDetails } from '@algorandfoundation/algokit-utils/types/app-client'
-import { useWallet } from '@txnlab/use-wallet-react'
-import algosdk from 'algosdk'
+import { useWallet } from '@txnlab/use-wallet'
 import { useSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { SaverClient } from '../contracts/Saver'
 import { getAlgodConfigFromViteEnvironment } from '../utils/network/getAlgoClientConfigs'
 
 const ViewSavings = () => {
@@ -20,14 +21,7 @@ const ViewSavings = () => {
   const [avgDeposit, setAvgDeposit] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const { activeAccount, transactionSigner } = useWallet()
-  const activeAddress = activeAccount?.address || null
-
-  const signer = {
-    addr: activeAddress!,
-    signer: async (txnGroup: algosdk.Transaction[], indexesToSign: number[]) => await transactionSigner(txnGroup, indexesToSign),
-  }
-
+  const { activeAddress, signer } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const navigate = useNavigate()
 
@@ -38,48 +32,31 @@ const ViewSavings = () => {
     token: algodConfig.token,
   })
 
-  const deployedAppID = 740800501n
+  const deployedAppID = 740800501
 
   const getAppDetails = (): AppDetails => ({
     resolveBy: 'id',
-    sender: signer,
+    sender: { signer, addr: activeAddress! } as TransactionSignerAccount,
     id: deployedAppID,
   })
 
   const fetchSavingsData = async () => {
     try {
-      console.log('[fetchSavingsData] Active address:', activeAddress)
+      const appClient = new SaverClient(getAppDetails(), algodClient)
+      const localState = await appClient.getLocalState(activeAddress!)
 
-      const accountInfo = await algodClient.accountInformation(activeAddress!).do()
-      console.log('[accountInfo]', accountInfo)
-
-      const appLocalState = accountInfo.appsLocalState?.find((app) => app.id === deployedAppID)
-      console.log('[appLocalState]', appLocalState)
-
-      const keyValue = appLocalState?.keyValue || []
-      console.log('[keyValue]', keyValue)
-
-      const getUintValue = (key: string) => {
-        const entry = keyValue.find((kv: any) => {
-          const decodedKey = Buffer.from(kv.key, 'base64').toString()
-          return decodedKey === key
-        })
-        console.log(`[${key}]`, entry)
-        return entry ? Number(entry.value.uint) : 0
-      }
-
-      setGoal(getUintValue('user_goal'))
-      setBalance(getUintValue('user_balance'))
-      setWithdrawCount(getUintValue('user_withdraw_count'))
-      setTotalSaved(getUintValue('total_saved'))
-      setLastGoal(getUintValue('last_user_goal'))
-      setLastWithdrawn(getUintValue('last_withdrawn'))
-      setLastWithdrawTime(getUintValue('last_withdraw_time'))
-      setHighestGoal(getUintValue('highest_goal_achieved'))
-      setAvgDeposit(getUintValue('average_deposit_amount'))
+      setGoal(localState.userGoal?.asNumber() ?? 0)
+      setBalance(localState.userBalance?.asNumber() ?? 0)
+      setWithdrawCount(localState.userWithdrawCount?.asNumber() ?? 0)
+      setTotalSaved(localState.totalSaved?.asNumber() ?? 0)
+      setLastGoal(localState.lastUserGoal?.asNumber() ?? 0)
+      setLastWithdrawn(localState.lastWithdrawn?.asNumber() ?? 0)
+      setLastWithdrawTime(localState.lastWithdrawTime?.asNumber() ?? 0)
+      setHighestGoal(localState.highestGoalAchieved?.asNumber() ?? 0)
+      setAvgDeposit(localState.averageDepositAmount?.asNumber() ?? 0)
     } catch (error) {
       enqueueSnackbar('Error fetching savings data.', { variant: 'error' })
-      console.error('[fetchSavingsData] Error:', error)
+      console.error(error)
     } finally {
       setLoading(false)
     }
